@@ -9,31 +9,41 @@ canvas.height = 576
 c.fillRect(0, 0, canvas.width, canvas.height)
 const gravity = 0.5
 class Sprite {
-    constructor({position, velocity, color}) {
+    constructor({position, velocity, color, offset}) {
         this.position = position
         this.velocity = velocity
         this.height = 150
         this.width = 50
         this.lastKey
         this.attackbox = {
-            position: this.position,
+            position: {
+                x: this.position.x,
+                y: this.position.y
+            },
+            offset,
             width: 100,
             height: 50,
         }
         this.color = color
         this.isAttacking
         this.canAttack = true
+        this.heath = 100
     }
     draw() {
         c.fillStyle = this.color
         c.fillRect(this.position.x, this.position.y, this.width, this.height)
         //attackbox
-        c.fillStyle = 'green'
-        c.fillRect(this.attackbox.position.x, this.attackbox.position.y, this.attackbox.width, this.attackbox.height)
+        if(this.isAttacking){
+            c.fillStyle = 'green'
+            c.fillRect(this.attackbox.position.x, this.attackbox.position.y, this.attackbox.width, this.attackbox.height)
+        }
     }
 
     update() {
         this.draw()
+        this.attackbox.position.x = this.position.x + this.attackbox.offset.x
+        this.attackbox.position.y = this.position.y
+
         this.position.y += this.velocity.y
         this.position.x += this.velocity.x
         if (this.position.y + this.height + this.velocity.y >= canvas.height) {
@@ -64,6 +74,10 @@ const player = new Sprite({
         x: 0,
         y: 0
     },
+    offset: {
+        x: 0,
+        y: 0
+    },
     color: 'red'
 })
 
@@ -76,6 +90,10 @@ const enemy = new Sprite({
     },
     velocity: {
         x: 0,
+        y: 0
+    },
+    offset: {
+        x: -50,
         y: 0
     },
     color: 'blue'
@@ -96,6 +114,23 @@ const keys = {
         pressed: false
     }
 }
+
+function detectCollision({rectangle1, rectangle2}){
+    return (
+        rectangle1.attackbox.position.x + rectangle1.attackbox.width >= rectangle2.position.x && rectangle1.attackbox.position.x <= rectangle2.position.x + rectangle2.width && rectangle1.attackbox.position.y + rectangle1.attackbox.height >= rectangle2.position.y && rectangle1.attackbox.position.y <= rectangle2.position.y + rectangle2.height 
+    )
+}
+
+let timer = 10
+function decreaseTimer() {
+    setTimeout(decreaseTimer, 1000)
+    if(timer > 0) {
+        timer--
+        document.querySelector('#Timer').innerHTML = timer
+    }
+}
+
+decreaseTimer()
 
 
 function animate() {
@@ -123,9 +158,15 @@ function animate() {
     }
 
     //collision
-    if(player.attackbox.position.x + player.attackbox.width >= enemy.position.x && player.attackbox.position.x <= enemy.position.x + enemy.width && player.attackbox.position.y + player.attackbox.height >= enemy.position.y && player.attackbox.position.y <= enemy.position.y + enemy.height && player.isAttacking) {
-        console.log("hit")
+    if(detectCollision({rectangle1: player, rectangle2: enemy}) && player.isAttacking) {
+        enemy.heath -= 20
+        document.querySelector('#EnemyHealth').style.width = enemy.heath + '%'
         player.isAttacking = false
+    }
+    if(detectCollision({rectangle1: enemy, rectangle2: player}) && enemy.isAttacking) {
+        player.heath -= 20
+        document.querySelector('#PlayerHealth').style.width = player.heath + '%'
+        enemy.isAttacking = false
     }
 }
 
@@ -163,6 +204,10 @@ window.addEventListener('keydown', (keyinfo) => {
                 enemy.velocity.y = -15
             }
             break;
+        case 'ArrowDown':
+            enemy.attack()
+            enemy.canAttack = false
+            break;
 
     }
 })
@@ -185,6 +230,9 @@ window.addEventListener('keyup', (keyinfo) => {
             break;
         case 'ArrowLeft':
             keys.ArrowLeft.pressed = false
+            break;
+        case 'ArrowDown':
+            enemy.canAttack = true
             break;
     }
 })

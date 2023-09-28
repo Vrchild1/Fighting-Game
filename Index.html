@@ -1,0 +1,30 @@
+<head>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div style="position: relative; display: inline-block;">
+        <div style="position: absolute; display: flex; width: 100%; align-items: center; padding: 20px;">
+            <!--Player Health-->
+            <div style="position: relative; height: 30px; width: 100%; display: flex; justify-content: flex-end;">
+                
+                <div style="background-color: yellow; height: 30px; width: 100%"></div>
+                <div id="PlayerHealth" style="position: absolute; background-color: red; top: 0; bottom: 0; right: 0; width: 100%;"></div>
+            </div>
+            <!--Timer-->
+            <div id = 'Timer'style="background-color: green; width: 100px; height: 100px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">10</div>
+            <!--Enemy Health-->
+            <div style="position: relative; height: 30px; width: 100%;">
+                
+                <div style="background-color: yellow; height: 30px;"></div>
+                <div id="EnemyHealth" style="position: absolute; background-color: blue; top: 0; bottom: 0; right: 0; left: 0;"></div>
+            </div>
+           
+        </div>
+        <canvas></canvas>
+    </div>
+    <script src="index.js"></script> 
+</body>
