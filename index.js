@@ -121,14 +121,41 @@ function detectCollision({rectangle1, rectangle2}){
     )
 }
 
-let timer = 10
+function detectWin() {
+    if (player.heath === enemy.heath) {
+        document.querySelector('#Result').innerHTML = 'Tie'
+    }
+    else if(player.heath > enemy.heath) {
+        document.querySelector('#Result').innerHTML = 'Player 1 Wins'   
+    }
+    else{
+        document.querySelector('#Result').innerHTML = 'Player 2 Wins'
+    }
+     document.querySelector('#Result').style.display = 'flex'
+}
+
+let gameover = false
+
+let timer = 60
+let timerId
 function decreaseTimer() {
-    setTimeout(decreaseTimer, 1000)
-    if(timer > 0) {
+    if(gameover === false){
+        timerId = setTimeout(decreaseTimer, 1000)
+        console.log(gameover)
+    }
+    if(timer > 0 && gameover === false) {
         timer--
         document.querySelector('#Timer').innerHTML = timer
     }
+    if(timer === 0 && gameover === false){
+        detectWin()
+        gameover = true
+    }
+    
 }
+
+
+
 
 decreaseTimer()
 
@@ -168,6 +195,11 @@ function animate() {
         document.querySelector('#PlayerHealth').style.width = player.heath + '%'
         enemy.isAttacking = false
     }
+
+    if(enemy.heath <=0 || player.heath <= 0){
+        detectWin(timerId)
+        gameover = true
+    }  
 }
 
 animate()
