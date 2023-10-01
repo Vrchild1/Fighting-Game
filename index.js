@@ -8,64 +8,28 @@ canvas.height = 576
 
 c.fillRect(0, 0, canvas.width, canvas.height)
 const gravity = 0.5
-class Sprite {
-    constructor({position, velocity, color, offset}) {
-        this.position = position
-        this.velocity = velocity
-        this.height = 150
-        this.width = 50
-        this.lastKey
-        this.attackbox = {
-            position: {
-                x: this.position.x,
-                y: this.position.y
-            },
-            offset,
-            width: 100,
-            height: 50,
-        }
-        this.color = color
-        this.isAttacking
-        this.canAttack = true
-        this.heath = 100
-    }
-    draw() {
-        c.fillStyle = this.color
-        c.fillRect(this.position.x, this.position.y, this.width, this.height)
-        //attackbox
-        if(this.isAttacking){
-            c.fillStyle = 'green'
-            c.fillRect(this.attackbox.position.x, this.attackbox.position.y, this.attackbox.width, this.attackbox.height)
-        }
-    }
-
-    update() {
-        this.draw()
-        this.attackbox.position.x = this.position.x + this.attackbox.offset.x
-        this.attackbox.position.y = this.position.y
-
-        this.position.y += this.velocity.y
-        this.position.x += this.velocity.x
-        if (this.position.y + this.height + this.velocity.y >= canvas.height) {
-            this.velocity.y = 0            
-        }
-        else {
-            this.velocity.y += gravity
-        }
-    }
-    attack() {
-        if(this.canAttack){
-            this.isAttacking = true
-            setTimeout(() => {
-                this.isAttacking = false
-            }, 100)
-        }
-    }
-}
 
 
+const background = new Sprite({
+    position: {
+        x: 0,
+        y: 0
+    }, 
+    ImgScr: 'Background.png'
+        
+    
+})
+const shop = new Sprite({
+    position: {
+        x: 300,
+        y: 131
+    }, 
+    ImgScr: 'Shop.png',
+    Frames: 6
+})
 
-const player = new Sprite({
+
+const player = new Fighter({
     position: {
         x: 0,
         y: 0
@@ -83,7 +47,7 @@ const player = new Sprite({
 
 
 
-const enemy = new Sprite({
+const enemy = new Fighter({
     position: {
         x: 400,
         y: 100
@@ -164,6 +128,8 @@ function animate() {
     window.requestAnimationFrame(animate)
     c.fillStyle ='black'
     c.fillRect(0, 0, canvas.width, canvas.height)
+    background.update()
+    shop.update()
     player.update()
     enemy.update()
 
